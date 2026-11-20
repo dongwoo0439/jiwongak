@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="학년·지역·관심 분야를 고르면 지금 지원할 수 있는 대외활동만 보여 줘요.">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>지원각</title>
+</head><body>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* Layout: 휴대폰 한 열 — 검색 → 조건 칩 → 유형 탭·찜 → "지원 가능 N건" 카드(찜·캘린더·링크 복사) → 빠진 공고와 이유 → 출처 */
+:root{
+  --bg:#f4f5fb; --card:#ffffff; --fg:#161827; --muted:#62667c; --line:#e1e3ee;
+  --accent:#4b3df5; --accent-ink:#ffffff; --accent-soft:#ebe9ff;
+  --hot:#e5484d; --hot-soft:#fde8e9; --warn:#a15c00; --warn-soft:#fff2dc; --cut:#8a8ea3;
+  --star:#b77f00; --star-ink:#ffffff;
+  --display:"Black Han Sans","Noto Sans KR",sans-serif;
+  --body:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1018; --card:#191b27; --fg:#eceef8; --muted:#a2a6bd; --line:#2b2e40;
+  --accent:#8f86ff; --accent-ink:#0f1018; --accent-soft:#25224a; --hot:#ff6b70; --hot-soft:#3a1c20; --warn:#ffb54d; --warn-soft:#33260f; --cut:#7d8197; --star:#ffc93d; --star-ink:#1b1400; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1018; --card:#191b27; --fg:#eceef8; --muted:#a2a6bd; --line:#2b2e40;
+  --accent:#8f86ff; --accent-ink:#0f1018; --accent-soft:#25224a; --hot:#ff6b70; --hot-soft:#3a1c20; --warn:#ffb54d; --warn-soft:#33260f; --cut:#7d8197; --star:#ffc93d; --star-ink:#1b1400; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px}
+main{max-width:600px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+.logo{font-family:var(--display);font-size:2.6rem;line-height:1;margin:0;letter-spacing:.01em}
+.logo span{color:var(--accent)}
+.sub{margin:8px 0 0;color:var(--muted);text-wrap:balance}
+.stats{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.stats b{color:var(--fg)}
+.search{display:flex;align-items:center;gap:8px;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:0 12px}
+.search:focus-within{border-color:var(--accent)}
+.search input{flex:1;min-width:0;border:0;background:transparent;color:var(--fg);font:inherit;padding:11px 0;outline:none}
+.search input::placeholder{color:var(--muted)}
+.search svg{flex:none;color:var(--muted)}
+.ask{display:flex;flex-direction:column;gap:16px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.q{display:flex;flex-direction:column;gap:8px}
+.q>span{font-size:.82rem;font-weight:700;color:var(--muted);letter-spacing:.03em}
+.q>small{font-size:.75rem;color:var(--muted);margin-top:-4px}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{font:inherit;font-size:.9rem;border:1.5px solid var(--line);background:transparent;color:var(--fg);border-radius:999px;padding:5px 13px;cursor:pointer;min-height:36px}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+.chip:focus-visible,.act:focus-visible,.tab:focus-visible,.reset:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.reset{align-self:flex-start;font:inherit;font-size:.8rem;color:var(--muted);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;font:inherit;font-size:.85rem;font-weight:700;border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:10px;padding:6px 12px;cursor:pointer;font-variant-numeric:tabular-nums}
+.tab[aria-pressed="true"]{background:var(--fg);border-color:var(--fg);color:var(--bg)}
+.tab.saved[aria-pressed="true"]{background:var(--star);border-color:var(--star);color:var(--star-ink)}
+.result h2{font-family:var(--display);font-weight:400;font-size:1.7rem;line-height:1.2;margin:0}
+.result h2 b{color:var(--accent);font-weight:400}
+.note{color:var(--muted);font-size:.85rem;margin:4px 0 0}
+.list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.card{display:grid;grid-template-columns:62px 1fr;gap:12px;align-items:start;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;min-width:0}
+.card.is-saved{border-color:var(--star)}
+.dday{font-family:var(--display);font-size:1.1rem;text-align:center;border-radius:10px;padding:8px 0;background:var(--accent-soft);color:var(--accent);font-variant-numeric:tabular-nums}
+.dday.hot{background:var(--hot-soft);color:var(--hot)}
+.dday.any{font-family:var(--body);font-size:.8rem;font-weight:700}
+.info{min-width:0}
+.info .t{display:block;font-size:.97rem;font-weight:700;line-height:1.4;color:inherit;text-decoration:none}
+.info a.t:hover{color:var(--accent);text-decoration:underline}
+.info small{display:block;color:var(--muted);font-size:.8rem;margin-top:3px}
+.tag{display:inline-block;font-size:.7rem;font-weight:700;border:1px solid var(--line);border-radius:6px;padding:0 6px;margin:0 4px 2px 0;color:var(--muted)}
+.tag.warn{border-color:transparent;background:var(--warn-soft);color:var(--warn)}
+.acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.act{font:inherit;font-size:.78rem;font-weight:700;display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);background:transparent;color:var(--fg);border-radius:8px;padding:3px 9px;cursor:pointer;text-decoration:none;min-height:30px}
+.act:hover{border-color:var(--accent)}
+.act.star[aria-pressed="true"]{border-color:var(--star);color:var(--star)}
+.rec{background:var(--card);border:1.5px solid var(--accent);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.rec .eb{font-size:.75rem;font-weight:700;letter-spacing:.05em;color:var(--accent)}
+.rec h3{margin:0;font-family:var(--display);font-weight:400;font-size:1.35rem;line-height:1.3}
+.rec p{margin:0;font-size:.9rem;color:var(--muted)}
+.rec .rows{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:.88rem;align-items:baseline}
+.rec .rows b{font-size:.78rem;color:var(--muted);white-space:nowrap}
+.rec .pill{display:inline-block;background:var(--accent-soft);color:var(--accent);font-weight:700;border-radius:999px;padding:1px 10px;margin:0 4px 4px 0;font-size:.82rem}
+.rec .tip{font-size:.82rem;background:var(--bg);border-radius:10px;padding:8px 10px;color:var(--fg)}
+.rec .go{align-self:flex-start;font:inherit;font-size:.85rem;font-weight:700;border:0;background:var(--accent);color:var(--accent-ink);border-radius:10px;padding:7px 14px;cursor:pointer}
+.rec .go:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tag.rk{border-color:transparent;background:var(--accent);color:var(--accent-ink)}
+.empty{background:var(--card);border:1px dashed var(--line);border-radius:14px;padding:18px;color:var(--muted);text-align:center}
+details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px 16px}
+summary{cursor:pointer;font-weight:700;padding:10px 0;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::after{content:" ▾";color:var(--muted)}
+details[open] summary::after{content:" ▴"}
+.cut{display:flex;flex-direction:column;gap:2px;padding:10px 0;border-top:1px solid var(--line)}
+.cut b{font-size:.92rem;color:var(--cut);text-decoration:line-through;text-decoration-thickness:1px}
+.cut span{font-size:.86rem}
+.cut a{color:var(--accent);font-size:.8rem}
+.why{background:var(--accent-soft);border-radius:14px;padding:14px 16px;font-size:.9rem}
+.why b{color:var(--accent)}
+footer{color:var(--muted);font-size:.8rem;display:flex;flex-direction:column;gap:6px}
+.share{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 14px;background:var(--card);border:1.5px solid var(--accent);border-radius:14px;padding:14px 16px}
+.share-t{display:flex;flex-direction:column;gap:2px;min-width:0}
+.share-t span{font-size:.78rem;color:var(--muted);word-break:break-all;user-select:all}
+.go2{font:inherit;font-size:.85rem;font-weight:700;border:0;background:var(--accent);color:var(--accent-ink);border-radius:10px;padding:8px 14px;cursor:pointer;min-height:38px}
+.go2:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.fb{display:flex;flex-direction:column;gap:6px;background:var(--accent-soft);border-radius:14px;padding:16px}
+.fb p{margin:0;font-size:.88rem}
+.fb .mine{color:var(--fg)}
+.fb .src2{color:var(--muted);font-size:.78rem}
+.fb .go2{align-self:flex-start;text-decoration:none;display:inline-flex;align-items:center;margin-top:4px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);font-size:.85rem;font-weight:700;padding:8px 14px;border-radius:10px;z-index:20;max-width:calc(100% - 32px);word-break:break-all}
+@media (prefers-reduced-motion:no-preference){.card,.act{transition:border-color .15s}}
+</style>
+
+<main>
+  <header>
+    <h1 class="logo">지원<span>각</span></h1>
+    <p class="sub">공고 목록을 다 뒤질 필요 없이, 내가 <b>지금 지원할 수 있는 대외활동·공모전·교육만</b> 마감 순으로 보여 드려요. 학년을 고르면 <b>그 학년에 하면 좋은 활동</b>도 추천해 드려요.</p>
+    <div class="stats" id="stats"></div>
+  </header>
+
+  <label class="search" for="q">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+    <input id="q" type="search" placeholder="공고명·기관 검색 (예: 영상, 해커톤, 금융)" autocomplete="off">
+  </label>
+
+  <section class="ask" aria-label="내 조건">
+    <div class="q"><span>학년</span>
+      <div class="chips" data-key="grade">
+        <button class="chip" id="g1" data-val="1" aria-pressed="false">1학년</button>
+        <button class="chip" id="g2" data-val="2" aria-pressed="false">2학년</button>
+        <button class="chip" id="g3" data-val="3" aria-pressed="false">3학년</button>
+        <button class="chip" id="g4" data-val="4" aria-pressed="false">4학년·졸업예정</button>
+      </div></div>
+    <div class="q"><span>사는 곳·다니는 학교</span><small>충청은 대전·세종, 전라는 광주, 경상은 부산·대구·울산 포함</small>
+      <div class="chips" data-key="region">
+        <button class="chip" id="r-seoul" data-val="seoul" aria-pressed="false">서울</button>
+        <button class="chip" id="r-incheon" data-val="incheon" aria-pressed="false">인천</button>
+        <button class="chip" id="r-gyeonggi" data-val="gyeonggi" aria-pressed="false">경기</button>
+        <button class="chip" id="r-gangwon" data-val="gangwon" aria-pressed="false">강원</button>
+        <button class="chip" id="r-chung" data-val="chung" aria-pressed="false">충청</button>
+        <button class="chip" id="r-jeolla" data-val="jeolla" aria-pressed="false">전라</button>
+        <button class="chip" id="r-gyeong" data-val="gyeong" aria-pressed="false">경상</button>
+        <button class="chip" id="r-jeju" data-val="jeju" aria-pressed="false">제주</button>
+      </div></div>
+    <div class="q"><span>관심 분야 (여러 개 선택 가능)</span>
+      <div class="chips" data-key="field" data-multi="1">
+        <button class="chip" id="f-ent" data-val="ent" aria-pressed="false">방송·엔터</button>
+        <button class="chip" id="f-ai" data-val="ai" aria-pressed="false">AI·IT·데이터</button>
+        <button class="chip" id="f-mkt" data-val="mkt" aria-pressed="false">마케팅·광고</button>
+        <button class="chip" id="f-design" data-val="design" aria-pressed="false">디자인·영상·사진</button>
+        <button class="chip" id="f-content" data-val="content" aria-pressed="false">콘텐츠·기자단</button>
+        <button class="chip" id="f-fin" data-val="fin" aria-pressed="false">금융·경영</button>
+        <button class="chip" id="f-public" data-val="public" aria-pressed="false">공공·정책</button>
+        <button class="chip" id="f-social" data-val="social" aria-pressed="false">봉사·글로벌</button>
+        <button class="chip" id="f-startup" data-val="startup" aria-pressed="false">창업·기획</button>
+      </div></div>
+    <div class="q"><span>국민내일배움카드</span>
+      <div class="chips" data-key="card">
+        <button class="chip" id="c-yes" data-val="yes" aria-pressed="false">있음</button>
+        <button class="chip" id="c-no" data-val="no" aria-pressed="false">없음</button>
+      </div></div>
+    <button class="reset" id="reset" type="button">조건 모두 지우기</button>
+  </section>
+
+  <section class="rec" id="rec" aria-live="polite" hidden></section>
+
+  <div class="tabs" id="tabs" role="group" aria-label="공고 유형"></div>
+
+  <section class="result" aria-live="polite">
+    <h2 id="headline"></h2>
+    <p class="note" id="subnote"></p>
+    <div class="list" id="list"></div>
+  </section>
+
+  <details id="cutbox">
+    <summary id="cutsum"></summary>
+    <div id="cutlist"></div>
+  </details>
+
+  <div class="why"><b>왜 이렇게 보여 주나요?</b> 공고 목록이 길수록 정작 지원할 수 있는 건 찾기 어려워요. 그래서 조건이 안 맞는 공고는 빼고, 뺀 이유도 함께 적었어요. 아무 말 없이 빠지면 "공고가 없나?" 하고 오해하게 되니까요. 아직 고르지 않은 조건이 걸린 공고에는 노란 표시를 달아 둬요. 고른 조건과 찜한 공고는 지금 쓰는 기기에만 저장돼요.</div>
+
+  <section class="fb" id="fb" hidden>
+    <b>30초 설문에 답해 주세요 (6문항)</b>
+    <p>지원각을 더 낫게 고치는 데 써요. 이름이나 연락처는 묻지 않아요.</p>
+    <p class="mine">설문에 적을 숫자: 지금 화면의 <b>지원할 수 있는 공고 <span id="mynum">-</span>건</b> <span class="src2">(학년·지역·카드를 고른 뒤의 숫자)</span></p>
+    <a class="go2" id="fblink" href="#" target="_blank" rel="noopener">설문 열기</a>
+  </section>
+
+  <div class="share">
+    <div class="share-t"><b>쓸 만했다면 친구에게도 보내 주세요</b><span id="shareurl">https://claude.ai/artifact/PbZv2oDXWQCXPwibH8zURP</span></div>
+    <button class="go2" id="sharebtn" type="button">지원각 링크 복사</button>
+  </div>
+
+  <footer>
+    <span>공고 데이터: 링커리어 공고 원문을 직접 열어 확인한 공고만 넣고, 매일 아침 새 공고를 더해요. 마감일이 원문 안에서 서로 다르거나 자격이 이미지로만 적힌 공고는 뺐어요. 마감이 지난 공고는 날짜가 바뀌면 저절로 숨겨져요. 지원 전에 꼭 원문을 확인해 주세요.</span>
+    <span>한양대 ERICA 학생이 Claude Code로 만든 개인 프로젝트예요. 불편한 점이나 추가됐으면 하는 공고는 이 링크가 올라온 글의 댓글로 알려 주세요.</span>
+  </footer>
+</main>
+<div class="toast" id="toast" hidden></div>
+
+<script src="posts.js"></script>
+<script>
+var FIELD={ent:"방송·엔터",ai:"AI·IT·데이터",mkt:"마케팅·광고",design:"디자인·영상",content:"콘텐츠·기자단",fin:"금융·경영",public:"공공·정책",social:"봉사·글로벌",startup:"창업·기획"};
+var REG={seoul:"서울",incheon:"인천",gyeonggi:"경기",gangwon:"강원",chung:"충청",jeolla:"전라",gyeong:"경상",jeju:"제주"};
+var KINDS=["대외활동","공모전","교육","인턴","봉사"];
+// 학년별 추천: 유형(kinds)은 카드에 "N학년 추천" 표시, 분야(fields)는 버튼 한 번으로 적용
+var REC={
+ 1:{goal:"넓게 둘러보며 내 관심 분야 찾기",why:"아직 진로를 좁히기 전이라, 부담이 적고 여러 분야를 맛볼 수 있는 활동이 좋아요.",kinds:["대외활동","봉사"],fields:["content","social","mkt"],tip:"서포터즈·기자단은 학년 조건이 느슨한 편이라 1학년도 도전하기 좋아요. 활동 기록은 블로그나 노션에 꼭 남겨 두세요."},
+ 2:{goal:"이름 남는 결과물 하나 만들기",why:"관심 분야가 보이기 시작할 때예요. 수상·작품·프로젝트 같은 결과물이 있으면 3·4학년 지원서가 쉬워져요.",kinds:["공모전","교육"],fields:["ai","design","startup"],tip:"공모전·해커톤은 학년 제한이 거의 없어요. 팀으로 나가면 협업 경험까지 한 번에 생겨요."},
+ 3:{goal:"직무를 좁히고 실무 경험 쌓기",why:"지원할 직무를 정하고, 그 직무와 바로 이어지는 교육·양성과정·체험형 인턴을 할 때예요.",kinds:["교육","인턴","대외활동"],fields:["fin","mkt","ai"],tip:"‘4학기 이상 수료’처럼 3학년부터 열리는 양성과정이 많아요. 위에서 3학년을 고르면 이런 공고가 지원 가능으로 바뀌어요."},
+ 4:{goal:"채용으로 이어지는 경험",why:"채용과 연결되는 인턴·공채, 졸업예정자 대상 국비 과정을 먼저 보세요.",kinds:["인턴","교육"],fields:["ai","fin","public"],tip:"졸업예정자 조건 공고가 열리는 학년이에요. 마감이 짧은 공고가 많으니 바로 캘린더에 넣어 두세요."}
+};
+function recKinds(){return state.grade&&REC[state.grade]?REC[state.grade].kinds:[];}
+function renderRec(){
+  var box=document.getElementById("rec"),g=state.grade,r=REC[g];
+  if(!r){box.hidden=true;return;}
+  var n=live().filter(function(p){return r.kinds.indexOf(p.k)>=0&&!check(p).cut;}).length;
+  box.hidden=false;
+  box.innerHTML='<span class="eb">'+(g===4?"4학년·졸업예정":g+"학년")+' 추천</span><h3>'+r.goal+'</h3><p>'+r.why+'</p>'+
+   '<div class="rows"><b>추천 유형</b><span>'+r.kinds.map(function(k){return '<span class="pill">'+k+'</span>';}).join("")+'</span>'+
+   '<b>시작하기 좋은 분야</b><span>'+r.fields.map(function(f){return '<span class="pill">'+FIELD[f]+'</span>';}).join("")+'</span></div>'+
+   '<div class="tip">'+r.tip+'</div>'+
+   '<p>지금 지원할 수 있는 추천 유형 공고 <b style="color:var(--fg)">'+n+'건</b>, 아래 카드에 <b style="color:var(--accent)">추천</b> 표시를 달았어요.</p>'+
+   '<button class="go" id="recgo" type="button">추천 분야로 바로 보기</button>';
+}
+var SKEY="jiwongak-v2";
+var state={grade:null,region:null,card:null,field:{},kind:null,q:"",onlySaved:false,saved:{}};
+function load(){try{var s=JSON.parse(localStorage.getItem(SKEY)||"null");if(s){state.grade=(s.grade===undefined?null:s.grade);state.region=(s.region===undefined?null:s.region);state.card=(s.card===undefined?null:s.card);state.field=s.field||{};state.kind=s.kind||null;state.saved=s.saved||{};}}catch(e){}}
+function save(){try{localStorage.setItem(SKEY,JSON.stringify({grade:state.grade,region:state.region,card:state.card,field:state.field,kind:state.kind,saved:state.saved}));}catch(e){}}
+function key(p){return p.u||(p.org+"|"+p.t);}
+function today(){var n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate());}
+function dleft(s){var p=s.split("-");return Math.round((new Date(+p[0],+p[1]-1,+p[2])-today())/86400000);}
+function esc(s){var e=document.createElement("span");e.textContent=s;return e.innerHTML.replace(/"/g,"&quot;");}
+function anyField(){for(var k in state.field)if(state.field[k])return true;return false;}
+function fieldOk(p){if(!anyField())return true;return p.f.some(function(x){return state.field[x];});}
+function qOk(p){var q=state.q.trim().toLowerCase();if(!q)return true;return (p.t+" "+p.org+" "+p.k+" "+(p.n||"")+" "+p.f.map(function(x){return FIELD[x];}).join(" ")).toLowerCase().indexOf(q)>=0;}
+function check(p){
+  var warn=[],cut=false;
+  if(p.min){ if(state.grade===null) warn.push(p.min===4?"졸업예정 이상":p.min+"학년 이상"); else if(state.grade<p.min) cut=true; }
+  if(p.reg){ if(state.region===null) warn.push(p.reg.map(function(r){return REG[r];}).join("·")+"만"); else if(p.reg.indexOf(state.region)<0) cut=true; }
+  if(p.card){ if(state.card===null) warn.push("내일배움카드 필요"); else if(state.card==="no") cut=true; }
+  return {cut:cut,warn:warn};
+}
+function pad(n){return (n<10?"0":"")+n;}
+function gcal(p){
+  var a=p.d.split("-"),e=new Date(+a[0],+a[1]-1,+a[2]+1);
+  var s=a.join(""),en=""+e.getFullYear()+pad(e.getMonth()+1)+pad(e.getDate());
+  return "https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent("[마감] "+p.t)+"&dates="+s+"/"+en+"&details="+encodeURIComponent(p.org+(p.u?"\n"+p.u:"")+"\n지원각에서 추가");
+}
+var toastT;
+function toast(m){var t=document.getElementById("toast");t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(function(){t.hidden=true;},2000);}
+// 설문 주소: 대표님이 구글 폼을 만들면 여기에 넣는다. 비어 있으면 설문 칸을 숨긴다.
+var FORM_URL="https://forms.gle/nzH46KzLqK8i523NA";
+(function(){var fb=document.getElementById("fb");if(!FORM_URL){fb.hidden=true;return;}fb.hidden=false;document.getElementById("fblink").href=FORM_URL;})();
+document.getElementById("sharebtn").addEventListener("click",function(){
+  var u=document.getElementById("shareurl").textContent;
+  function fb(){var r=document.createRange();r.selectNodeContents(document.getElementById("shareurl"));var s=getSelection();s.removeAllRanges();s.addRange(r);toast("주소를 선택해 뒀어요. 길게 눌러 복사해 주세요");}
+  try{navigator.clipboard.writeText(u).then(function(){toast("지원각 링크를 복사했어요");},fb);}catch(err){fb();}
+});
+function live(){return POSTS.filter(function(p){return !(p.d&&dleft(p.d)<0);});}
+function renderStats(){
+  var L2=live(),wk=L2.filter(function(p){return p.d&&dleft(p.d)<=7;}).length;
+  var sv=Object.keys(state.saved).length;
+  document.getElementById("stats").innerHTML="<span>진행 중 공고 <b>"+L2.length+"건</b></span><span>일주일 안 마감 <b>"+wk+"건</b></span><span>"+(+UPDATED.slice(5,7))+"월 "+(+UPDATED.slice(8,10))+"일 업데이트</span>";
+  var pool=L2.filter(function(p){return fieldOk(p)&&qOk(p);}),counts={};
+  pool.forEach(function(p){counts[p.k]=(counts[p.k]||0)+1;});
+  var h='<button class="tab" id="t-all" data-k="" aria-pressed="'+(!state.kind&&!state.onlySaved)+'">전체 '+pool.length+'</button>';
+  KINDS.forEach(function(k,i){if(counts[k])h+='<button class="tab" id="t-'+i+'" data-k="'+k+'" aria-pressed="'+(state.kind===k&&!state.onlySaved)+'">'+k+' '+counts[k]+'</button>';});
+  h+='<button class="tab saved" id="t-saved" data-saved="1" aria-pressed="'+state.onlySaved+'">★ 찜 '+sv+'</button>';
+  document.getElementById("tabs").innerHTML=h;
+}
+function render(){
+  renderStats();renderRec();
+  var ok=[],cut=[],past=0;
+  POSTS.forEach(function(p){
+    if(!fieldOk(p)||!qOk(p))return;
+    if(state.onlySaved){if(!state.saved[key(p)])return;}
+    else if(state.kind&&p.k!==state.kind)return;
+    if(p.d&&dleft(p.d)<0){past++;return;}
+    var c=check(p); if(c.cut)cut.push(p); else ok.push({p:p,w:c.warn});
+  });
+  ok.sort(function(a,b){var x=a.p.d?dleft(a.p.d):9999,y=b.p.d?dleft(b.p.d):9999;return x-y;});
+  var soon=ok.filter(function(o){return o.p.d&&dleft(o.p.d)<=7;}).length;
+  var asked=(state.grade!==null)+(state.region!==null)+(state.card!==null);
+  document.getElementById("headline").innerHTML=state.onlySaved?"찜한 공고 <b>"+ok.length+"건</b>":"지금 지원할 수 있는 공고 <b>"+ok.length+"건</b>";
+  document.getElementById("subnote").textContent=(soon?"그중 "+soon+"건은 일주일 안에 마감돼요. ":"")+(past?"이미 마감된 "+past+"건은 숨겼어요. ":"")+(asked<3&&!state.onlySaved?"학년·지역·카드를 고르면 더 정확해져요.":"");
+  if(!state.onlySaved&&!state.kind&&!state.q)document.getElementById("mynum").textContent=ok.length;
+  var Lst=document.getElementById("list");
+  if(!ok.length){Lst.innerHTML='<div class="empty">'+(state.onlySaved?"아직 찜한 공고가 없어요. 공고 카드의 ☆ 찜을 눌러 모아 두세요.":state.q?"‘"+esc(state.q)+"’에 맞는 공고가 없어요. 다른 말로 검색해 보세요.":"지금 조건에 맞는 공고가 없어요. 관심 분야를 더 골라 보세요.")+'</div>';}
+  else Lst.innerHTML=ok.map(function(o){
+    var p=o.p,n=p.d?dleft(p.d):null,k=key(p),sv=!!state.saved[k];
+    var dd=p.d?(n===0?"D-DAY":"D-"+n):esc(p.any);
+    var cls="dday"+(p.d?(n<=3?" hot":""):" any");
+    var rk=recKinds().indexOf(p.k)>=0;
+    var tags=(rk?'<span class="tag rk">'+(state.grade===4?"졸업예정":state.grade+"학년")+' 추천</span>':'')+'<span class="tag">'+esc(p.k)+'</span>'+p.f.map(function(x){return '<span class="tag">'+FIELD[x]+'</span>';}).join("")+o.w.map(function(w){return '<span class="tag warn">'+esc(w)+'</span>';}).join("");
+    var date=p.d?(p.d.slice(5).replace("-","/")+" 마감"):"";
+    var meta=[esc(p.org),date,p.n?esc(p.n):""].filter(Boolean).join(" · ");
+    var title=p.u?'<a class="t" href="'+p.u+'" target="_blank" rel="noopener">'+esc(p.t)+'</a>':'<span class="t">'+esc(p.t)+'</span>';
+    var acts='<button class="act star" data-act="save" data-key="'+esc(k)+'" aria-pressed="'+sv+'">'+(sv?"★ 찜함":"☆ 찜")+'</button>';
+    if(p.d)acts+='<a class="act" href="'+gcal(p)+'" target="_blank" rel="noopener">캘린더에 넣기</a>';
+    if(p.u)acts+='<button class="act" data-act="copy" data-url="'+p.u+'">링크 복사</button>';
+    return '<div class="card'+(sv?" is-saved":"")+'"><span class="'+cls+'">'+dd+'</span><span class="info">'+title+'<small>'+tags+'</small><small>'+meta+'</small><span class="acts">'+acts+'</span></span></div>';
+  }).join("");
+  var box=document.getElementById("cutbox");
+  box.hidden=!cut.length;
+  document.getElementById("cutsum").textContent="조건이 안 맞아 뺀 공고 "+cut.length+"건, 이유 보기";
+  document.getElementById("cutlist").innerHTML=cut.map(function(p){
+    return '<div class="cut"><b>'+esc(p.org)+" · "+esc(p.t)+'</b><span>'+esc(p.cond)+'</span>'+(p.u?'<a href="'+p.u+'" target="_blank" rel="noopener">원문 공고 보기</a>':'')+'</div>';
+  }).join("");
+}
+function syncChips(){
+  document.querySelectorAll(".chips").forEach(function(g){
+    var key=g.dataset.key;
+    g.querySelectorAll(".chip").forEach(function(c){
+      var v=c.dataset.val,on;
+      if(key==="field")on=!!state.field[v];else if(key==="grade")on=state.grade===+v;else on=state[key]===v;
+      c.setAttribute("aria-pressed",on);
+    });
+  });
+}
+document.querySelectorAll(".chips").forEach(function(g){
+  var key=g.dataset.key,multi=!!g.dataset.multi;
+  g.addEventListener("click",function(e){
+    var b=e.target.closest(".chip");if(!b)return;
+    var on=b.getAttribute("aria-pressed")!=="true";
+    if(multi){if(on)state.field[b.dataset.val]=true;else delete state.field[b.dataset.val];}
+    else{var v=on?b.dataset.val:null;state[key]=(key==="grade"&&v!==null)?+v:v;}
+    syncChips();save();render();
+  });
+});
+document.getElementById("tabs").addEventListener("click",function(e){
+  var b=e.target.closest(".tab");if(!b)return;
+  if(b.dataset.saved){state.onlySaved=!state.onlySaved;}
+  else{state.onlySaved=false;state.kind=b.dataset.k||null;}
+  save();render();
+});
+document.getElementById("list").addEventListener("click",function(e){
+  var b=e.target.closest("[data-act]");if(!b)return;
+  if(b.dataset.act==="save"){
+    var k=b.dataset.key,on=!state.saved[k];
+    if(on)state.saved[k]=1;else delete state.saved[k];
+    save();render();toast(on?"찜했어요. 위의 ★ 찜 탭에서 모아 볼 수 있어요":"찜을 풀었어요");
+  }else if(b.dataset.act==="copy"){
+    var u=b.dataset.url;
+    try{navigator.clipboard.writeText(u).then(function(){toast("링크를 복사했어요");},function(){toast(u);});}catch(err){toast(u);}
+  }
+});
+document.getElementById("rec").addEventListener("click",function(e){
+  if(!e.target.closest("#recgo"))return;var r=REC[state.grade];if(!r)return;
+  state.field={};r.fields.forEach(function(f){state.field[f]=true;});
+  state.kind=null;state.onlySaved=false;syncChips();save();render();
+  document.getElementById("headline").scrollIntoView({behavior:"smooth",block:"start"});
+  toast("추천 분야 "+r.fields.length+"개를 골랐어요");
+});
+var qi=document.getElementById("q");
+qi.addEventListener("input",function(){state.q=qi.value;render();});
+document.getElementById("reset").addEventListener("click",function(){state.grade=null;state.region=null;state.card=null;state.field={};state.kind=null;state.q="";qi.value="";state.onlySaved=false;syncChips();save();render();toast("조건을 지웠어요");});
+load();syncChips();render();
+</script>
+</body></html>
